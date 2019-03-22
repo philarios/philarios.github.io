@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  
+
+  <title>Tutorial - Philarios</title>
+  <link rel="stylesheet" href="https://philarios.github.io//assets/css/just-the-docs.css">
+
+  
+
+  
+  <script type="text/javascript" src="https://philarios.github.io//assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+  <div class="page-wrap">
+    <div class="side-bar">
+      <a href="https://philarios.github.io/" class="site-title fs-6 lh-tight">Philarios</a>
+      <span class="fs-3"><button class="js-main-nav-trigger navigation-list-toggle btn btn-outline" type="button" data-text-toggle="Hide">Menu</button></span>
+      <div class="navigation main-nav js-main-nav">
+        <nav role="navigation" aria-label="Main navigation">
+  <ul class="navigation-list">
+    
+    
+      
+        
+          <li class="navigation-list-item active">
+            
+            <a href="https://philarios.github.io//404.html" class="navigation-list-link"></a>
+            
+          </li>
+        
+      
+    
+      
+        
+          <li class="navigation-list-item">
+            
+            <a href="https://philarios.github.io//about/" class="navigation-list-link">About</a>
+            
+          </li>
+        
+      
+    
+      
+        
+          <li class="navigation-list-item active">
+            
+            <a href="https://philarios.github.io//" class="navigation-list-link"></a>
+            
+          </li>
+        
+      
+    
+      
+        
+          <li class="navigation-list-item active">
+            
+            <a href="https://philarios.github.io//tutorial.html" class="navigation-list-link active">Tutorial</a>
+            
+          </li>
+        
+      
+    
+  </ul>
+</nav>
+
+      </div>
+      <footer role="contentinfo" class="site-footer">
+        <p class="text-small text-grey-dk-000 mb-0">This site uses <a href="https://github.com/pmarsceill/just-the-docs">Just the Docs</a>, a documentation theme for Jekyll.</p>
+      </footer>
+    </div>
+    <div class="main-content-wrap js-main-content" tabindex="0">
+      <div class="page-header">
+        <div class="main-content">
+          
+          
+        </div>
+      </div>
+      <div class="main-content">
+        
+          
+        
+        <div id="main-content" class="page-content" role="main">
+          <h1 id="tutorial">Tutorial</h1>
+
+<p>In this section we will walk through setting up a project using Philarios and creating our fist DSL specs.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+  <li>Familiarity with <a href="https://kotlinlang.org/">Kotlin</a></li>
+  <li>Having read about <a href="https://kotlinlang.org/docs/reference/type-safe-builders.html">Type-Safe Builders</a></li>
+  <li>For the more advanced sections knowledge of <a href="https://www.terraform.io/">Terraform</a></li>
+</ul>
+
+<h2 id="project-setup">Project setup</h2>
+
+<p>The easiest way to setup a project is to use Gradle. For this, we just add this following snippet to out <code class="highlighter-rouge">build.gradle</code>
+file:</p>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">buildscript</span> <span class="o">{</span>
+    <span class="n">ext</span> <span class="o">{</span>
+        <span class="n">philarios_version</span> <span class="o">=</span> <span class="s1">'0.10.0'</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">repositories</span> <span class="o">{</span>
+	<span class="n">maven</span> <span class="o">{</span>
+		<span class="n">url</span>  <span class="s2">"https://dl.bintray.com/philarios/philarios"</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">compile</span> <span class="s2">"io.philarios:philarios-core-v0-jvm:${philarios_version}"</span>
+    <span class="n">compile</span> <span class="s2">"io.philarios:philarios-filesystem-v0-jvm:${philarios_version}"</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>This include two dependencies to your project: the Philarios core module as well as the file system module. The core
+module contains all fundamental code that is necessary for running all Philarios projects. The file system model, on the
+other hand, is a simple example DSL that we will be using throughout the tutorial.</p>
+
+<h2 id="your-first-spec">Your first spec</h2>
+
+<p>The file system spec allows us to write type-safe builders that allows us to create objects of the following domain
+model:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">sealed</span> <span class="kd">class</span> <span class="nc">Entry</span>
+
+<span class="kd">data class</span> <span class="nc">Directory</span><span class="p">(</span><span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="kd">val</span> <span class="py">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Entry</span><span class="p">&gt;)</span> <span class="p">:</span> <span class="n">Entry</span><span class="p">()</span>
+
+<span class="kd">data class</span> <span class="nc">File</span><span class="p">(</span><span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">:</span> <span class="n">Entry</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>This model defines entries in a file system. An entry can either be a directory which has a name and a list of children
+or a file which just has a name. In other words: it’s a file tree.</p>
+
+<p>Now, after taking a look at the model, let’s write our first <code class="highlighter-rouge">FileSpec</code>:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">file</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">&lt;</span><span class="n">Any</span><span class="p">?&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">(</span><span class="s">"My file"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This code creates a new <code class="highlighter-rouge">FileSpec</code> variable using a special constructor. This constructor’s only parameter is a function
+that takes a <code class="highlighter-rouge">FileBuilder</code> as its <code class="highlighter-rouge">receiver</code>. Basically, this means that inside the curly braces the <code class="highlighter-rouge">this</code> keyword 
+refers to a <code class="highlighter-rouge">FileBuilder</code> instance. Using this builder, we can declaratively set the file’s name to “My file”. You also
+might be wondering about the generic parameter (here set to <code class="highlighter-rouge">Any?</code>) but please ignore it for now as we will cover it 
+soon.</p>
+
+<p>The next thing we will do is define a directory containing our file:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">directory</span> <span class="p">=</span> <span class="n">DirectorySpec</span><span class="p">&lt;</span><span class="n">Any</span><span class="p">?&gt;</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">(</span><span class="s">"My directory"</span><span class="p">)</span>
+    <span class="n">entry</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This looks very similar to the the <code class="highlighter-rouge">FileSpec</code> with the difference that we are actually adding the previously defined
+<code class="highlighter-rouge">file</code> variable as an entry to our <code class="highlighter-rouge">dictionary</code>. Because the <code class="highlighter-rouge">Dictionary</code> class is defined to have a list of entries
+the <code class="highlighter-rouge">DictionaryBuilder</code> contains functions to add them.</p>
+
+<p>Of course, instead of defining the <code class="highlighter-rouge">file</code> in a separate variable, we can also inline the <code class="highlighter-rouge">FileSpec</code> directly into the
+<code class="highlighter-rouge">entry</code> function:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">directory</span> <span class="p">=</span> <span class="n">DirectorySpec</span><span class="p">&lt;</span><span class="n">Any</span><span class="p">?&gt;</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">(</span><span class="s">"My directory"</span><span class="p">)</span>
+    <span class="n">entry</span><span class="p">(</span><span class="n">FileSpec</span> <span class="p">{</span> 
+        <span class="n">name</span><span class="p">(</span><span class="s">"My File"</span><span class="p">)</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Finally, we can evaluate our spec with just a few lines of code:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">suspend</span> <span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">output</span> <span class="p">=</span> <span class="n">emptyContext</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">value</span>
+    <span class="n">println</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>How this exactly works will be explained in the next section. But for now, we can take a look at the output and see that
+it is in fact a instance of the <code class="highlighter-rouge">Directory</code> class with on <code class="highlighter-rouge">File</code> entry:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Directory(name=My directory, entries=[File(name=My file)])
+</code></pre></div></div>
+
+<p>How useful is this, though? Well, with only this much code, not very useful. But we could implement a simple algorithm 
+that traverses the output file tree and actually creates the directories and files in the system. Then this would allow 
+us to write a declarative scaffolding tool. Which could be nice to have.</p>
+
+<h2 id="working-with-context">Working with context</h2>
+
+<p>Now let us take a closer look at that generic parameter. What this allows us to do is to define the type of <code class="highlighter-rouge">context</code>
+that is used to write the spec, i.e. we can write a parameterized spec, similar to a template engine. In fact, each
+builder receiver, in addition to its DSL functions, also has a <code class="highlighter-rouge">context</code> variable the type of which is the same as the
+spec’s generic parameter.</p>
+
+<p>The following snippet shows how use the <code class="highlighter-rouge">context</code> variable in a spec. The spec’s generic parameter is <code class="highlighter-rouge">Int</code>, which means
+that the builder’s <code class="highlighter-rouge">context</code> variable is also of the same type.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">file</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">&lt;</span><span class="n">Int</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">(</span><span class="s">"My file #$context"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Each builder also provides the <code class="highlighter-rouge">include</code> and <code class="highlighter-rouge">includeForEach</code> helper functions for including specs with a different
+context. <code class="highlighter-rouge">context..context+4</code> creates a list of five integers starting from the value of the outer context while
+<code class="highlighter-rouge">includeForEach</code> takes an iterable and includes an inner spec for each of its values.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">directory</span> <span class="p">=</span> <span class="n">DirectorySpec</span><span class="p">&lt;</span><span class="n">Int</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">(</span><span class="s">"My directory"</span><span class="p">)</span>
+
+    <span class="n">includeForEach</span><span class="p">(</span><span class="n">context</span><span class="o">..</span><span class="n">context</span><span class="p">+</span><span class="m">4</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">entry</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Next we can make a slight change to the <code class="highlighter-rouge">main</code> function: instead of using the <code class="highlighter-rouge">emptyContext</code> - which would set the 
+builder’s <code class="highlighter-rouge">context</code> variable to <code class="highlighter-rouge">null</code> - we will use <code class="highlighter-rouge">contextOf(0)</code>. This sets the <code class="highlighter-rouge">context</code> variable of the outer
+directory spec to <code class="highlighter-rouge">0</code>.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">suspend</span> <span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">output</span> <span class="p">=</span> <span class="n">contextOf</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">value</span>
+    <span class="n">println</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And just like we expected (hopefully me and you, both), the new directory now has five entries (up from only one in the
+first example):</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Directory(
+    name=My directory, 
+    entries=[
+        File(name=My file #0), 
+        File(name=My file #1), 
+        File(name=My file #2), 
+        File(name=My file #3), 
+        File(name=My file #4)
+    ]
+)
+</code></pre></div></div>
+
+<p>Basically, each spec is a templated DSL invocation which is then realized in the <code class="highlighter-rouge">main</code> method when connecting it with
+an actual context.</p>
+
+<h2 id="creating-a-schema">Creating a schema</h2>
+
+<p>So far we have only used the file system DSL. But fret not, creating your own Philarios DSL is easy! Because with 
+Philarios there is a DSL for defining DSLs (how wonderful). The only thing you need to add to your project is the
+schema module, which contains the DSL for defining new schemas:</p>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compile</span> <span class="s2">"io.philarios:philarios-schema-v0-jvm:${philarios_version}"</span>
+</code></pre></div></div>
+
+<p>With the new module in hand, we can create a new schema that declares a project DSL:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">projectSchema</span> <span class="p">=</span> <span class="n">SchemaSpec</span><span class="p">&lt;</span><span class="n">Any</span><span class="p">?&gt;</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">(</span><span class="s">"Project"</span><span class="p">)</span>
+    <span class="n">pkg</span><span class="p">(</span><span class="s">"io.philarios.example.tutorial.creatingaschema.project"</span><span class="p">)</span>
+
+    <span class="n">type</span><span class="p">(</span><span class="n">StructSpec</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">(</span><span class="s">"Project"</span><span class="p">)</span>
+        <span class="n">field</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">(</span><span class="s">"name"</span><span class="p">)</span>
+            <span class="n">type</span><span class="p">(</span><span class="n">StringType</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">field</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">(</span><span class="s">"modules"</span><span class="p">)</span>
+            <span class="n">type</span><span class="p">(</span><span class="n">ListTypeSpec</span> <span class="p">{</span>
+                <span class="n">type</span><span class="p">(</span><span class="n">RefTypeSpec</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">(</span><span class="s">"Module"</span><span class="p">)</span>
+                <span class="p">})</span>
+            <span class="p">})</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+
+    <span class="n">type</span><span class="p">(</span><span class="n">UnionSpec</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">(</span><span class="s">"Module"</span><span class="p">)</span>
+        <span class="n">shape</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">(</span><span class="s">"JavaModule"</span><span class="p">)</span>
+            <span class="n">field</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">(</span><span class="s">"name"</span><span class="p">)</span>
+                <span class="n">type</span><span class="p">(</span><span class="n">StringType</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">field</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">(</span><span class="s">"version"</span><span class="p">)</span>
+                <span class="n">type</span><span class="p">(</span><span class="n">IntType</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">shape</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">(</span><span class="s">"DockerModule"</span><span class="p">)</span>
+            <span class="n">field</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">(</span><span class="s">"name"</span><span class="p">)</span>
+                <span class="n">type</span><span class="p">(</span><span class="n">StringType</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now this snippet is somewhat longer but you do not need to understand everything right away. The most important parts
+are that we create a new <code class="highlighter-rouge">SchemaSpec</code>, give it a name and specify in which package it is. Then we define a couple of
+types. A <code class="highlighter-rouge">Project</code> is a struct that has a name as well as a couple of modules while a <code class="highlighter-rouge">Module</code> is a union of the
+<code class="highlighter-rouge">JavaModule</code> struct and the <code class="highlighter-rouge">DockerModule</code> struct. In short, a project has a number of modules which can either be
+Java- or Docker-focused.</p>
+
+<p>Similar to the directory specs in the previous examples we can create a <code class="highlighter-rouge">main</code> function to generate us some code that
+makes the <code class="highlighter-rouge">ProjectSchema</code> usable:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">suspend</span> <span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">emptyContext</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">projectSchema</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">SchemaCodegen</span><span class="p">(</span><span class="s">"./src/main/kotlin"</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">SchemaCodegen</code> class is a <code class="highlighter-rouge">Translator</code> which translates a <code class="highlighter-rouge">Schema</code> object into Kotlin code containing all the model,
+spec and builder classes (among others). In fact, both the file system DSL and the schema DSL itself are created this
+way.</p>
+
+<p>Just to double check, here is the resulting model in plain Kotlin classes:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">data class</span> <span class="nc">Project</span><span class="p">(</span><span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="kd">val</span> <span class="py">modules</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Module</span><span class="p">&gt;)</span>
+
+<span class="k">sealed</span> <span class="kd">class</span> <span class="nc">Module</span>
+
+<span class="kd">data class</span> <span class="nc">JavaModule</span><span class="p">(</span><span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="kd">val</span> <span class="py">version</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">Module</span><span class="p">()</span>
+
+<span class="kd">data class</span> <span class="nc">DockerModule</span><span class="p">(</span><span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">:</span> <span class="n">Module</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>As you can see <code class="highlighter-rouge">Struct</code> types are translated into data classes while <code class="highlighter-rouge">Union</code> types are translated into sealed classes.</p>
+
+<h2 id="using-the-schema">Using the schema</h2>
+
+<p>Once the necessary classes have been generated we can use them right away to declare ourselves a cool new project:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">myProject</span> <span class="p">=</span> <span class="n">ProjectSpec</span><span class="p">&lt;</span><span class="n">Any</span><span class="p">?&gt;</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">(</span><span class="s">"My cool project"</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="p">(</span><span class="n">JavaModuleSpec</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">(</span><span class="s">"server"</span><span class="p">)</span>
+        <span class="n">version</span><span class="p">(</span><span class="m">8</span><span class="p">)</span>
+    <span class="p">})</span>
+
+    <span class="n">module</span><span class="p">(</span><span class="n">JavaModuleSpec</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">(</span><span class="s">"client"</span><span class="p">)</span>
+        <span class="n">version</span><span class="p">(</span><span class="m">6</span><span class="p">)</span>
+    <span class="p">})</span>
+
+    <span class="n">module</span><span class="p">(</span><span class="n">DockerModuleSpec</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">(</span><span class="s">"lb"</span><span class="p">)</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This should not surprise you all that much, considering that it is very similar to the directory spec we have created
+earlier. Our cool project has three modules: a server running Java 8, a client running Java 6 and a load balancer that
+we package as a Docker image.</p>
+
+<p>But what can we do with this project spec? Well, we can take the its output and define us some module and project
+directories. This could work as the basis of an actual project scaffolding tool.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">javaModuleDir</span> <span class="p">=</span> <span class="n">DirectorySpec</span><span class="p">&lt;</span><span class="n">JavaModule</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">version</span> <span class="p">&lt;</span> <span class="m">7</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">entry</span><span class="p">(</span><span class="n">FileSpec</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">(</span><span class="s">"pom.xml"</span><span class="p">)</span>
+        <span class="p">})</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">entry</span><span class="p">(</span><span class="n">FileSpec</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">(</span><span class="s">"build.gradle"</span><span class="p">)</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="kd">val</span> <span class="py">dockerModuleDir</span> <span class="p">=</span> <span class="n">DirectorySpec</span><span class="p">&lt;</span><span class="n">DockerModule</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">entry</span><span class="p">(</span><span class="n">FileSpec</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">(</span><span class="s">"Dockerfile"</span><span class="p">)</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Here we have defined two directories: a java module directory as well as a docker module directory. And because we are
+setting the context type to <code class="highlighter-rouge">JavaModule</code> and <code class="highlighter-rouge">DockerModule</code>, respectively, we can access instances of these classes
+using the builder’s <code class="highlighter-rouge">context</code> variable. For example, we can create a Maven-based directory if the Java version is less
+than seven but a Gradle-based directory otherwise (I must admit this is just a little bit contrived).</p>
+
+<p>Next we can create an encompassing project directory:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">projectDir</span> <span class="p">=</span> <span class="n">DirectorySpec</span><span class="p">&lt;</span><span class="n">Project</span><span class="p">&gt;</span> <span class="p">{</span>
+
+    <span class="n">name</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">includeForEach</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">modules</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">entry</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">directory</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="kd">val</span> <span class="py">Module</span><span class="p">.</span><span class="n">directory</span><span class="p">:</span> <span class="n">DirectorySpec</span><span class="p">&lt;</span><span class="n">Module</span><span class="p">&gt;</span>
+    <span class="k">get</span><span class="p">()</span> <span class="p">=</span> <span class="k">when</span> <span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">is</span> <span class="n">JavaModule</span> <span class="p">-&gt;</span> <span class="n">javaModuleDir</span> <span class="k">as</span> <span class="n">DirectorySpec</span><span class="p">&lt;</span><span class="n">Module</span><span class="p">&gt;</span>
+        <span class="k">is</span> <span class="n">DockerModule</span> <span class="p">-&gt;</span> <span class="n">dockerModuleDir</span> <span class="k">as</span> <span class="n">DirectorySpec</span><span class="p">&lt;</span><span class="n">Module</span><span class="p">&gt;</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>For each of the project’s modules we include the corresponding module directory. The <code class="highlighter-rouge">Module.directory</code> property uses
+one of Kotlin’s features: if a <code class="highlighter-rouge">when</code> block is looking at an instance of a sealed class (in this case <code class="highlighter-rouge">Module</code>), there
+has to be a branch for each of its subclasses - otherwise it will not compile (Honestly, I don’t know why I need to cast 
+the return values, please let me know why this is). This is nice to have in case you want to add a new module type and 
+forget to add a directory for it.</p>
+
+<p>All in all, defining a <code class="highlighter-rouge">DirectorySpec</code> with a <code class="highlighter-rouge">Project</code> as its <code class="highlighter-rouge">context</code> allows us to chain the specs:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">suspend</span> <span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">output</span> <span class="p">=</span> <span class="n">emptyContext</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">myProject</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">projectDir</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">value</span>
+    <span class="n">println</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>First, we create our project using a <code class="highlighter-rouge">null</code> context; next, we create our project directory using our project as the
+context. Just as we have hoped, this creates a single project directory with three child directories for its three
+modules:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Directory(
+    name=My cool project, 
+    entries=[
+        Directory(name=server, entries=[File(name=build.gradle)]), 
+        Directory(name=client, entries=[File(name=pom.xml)]), 
+        Directory(name=lb, entries=[File(name=Dockerfile)])
+    ]
+)
+</code></pre></div></div>
+
+<h2 id="translating-to-terraform">Translating to Terraform</h2>
+
+<p>While it is certainly cool to be able to create a project scaffolding tool with Philarios, its true potential shines
+through when connecting our project spec with an external tool, like <a href="https://www.terraform.io/">Terraform</a>. Assume
+that we now want to create some repositories on Github for our project, one for each module. We can do so using the
+<a href="https://www.terraform.io/docs/providers/github/index.html">Github provider</a> for terraform.</p>
+
+<p>We start off by including the Terraform DSL in our project:</p>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compile</span> <span class="s2">"io.philarios:philarios-terraform-v0-jvm:${philarios_version}"</span>
+</code></pre></div></div>
+
+<p>This allows us to write some configuration specs for terraform, starting with the Github provider definition:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">projectProvider</span> <span class="p">=</span> <span class="n">ConfigurationSpec</span><span class="p">&lt;</span><span class="n">Project</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">provider</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">(</span><span class="s">"github"</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">(</span><span class="s">"organization"</span> <span class="n">to</span> <span class="n">context</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">(</span><span class="s">"token"</span> <span class="n">to</span> <span class="s">"123456"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now, this only vaguely resembles HCL and could definitely use some improvements, but I hope you see the parallels
+nevertheless. We can already improve it somewhat using the syntax-sugar extension functions that are coming with the
+terraform module:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">projectProvider</span> <span class="p">=</span> <span class="n">ConfigurationSpec</span><span class="p">&lt;</span><span class="n">Project</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">provider</span><span class="p">(</span><span class="s">"github"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">config</span><span class="p">(</span><span class="s">"organization"</span> <span class="n">to</span> <span class="n">context</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">(</span><span class="s">"token"</span> <span class="n">to</span> <span class="s">"123456"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This comes closer to the original HCL where the provider name directly follows the <code class="highlighter-rouge">provider</code> keyword on the first line.
+We can also define two <code class="highlighter-rouge">github_repository</code> resources for the Java and Docker modules:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">javaModuleRepo</span> <span class="p">=</span> <span class="n">ConfigurationSpec</span><span class="p">&lt;</span><span class="n">JavaModule</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">resource</span><span class="p">(</span><span class="s">"github_repository"</span><span class="p">,</span> <span class="n">context</span><span class="p">.</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">val</span> <span class="py">dockerModuleRepo</span> <span class="p">=</span> <span class="n">ConfigurationSpec</span><span class="p">&lt;</span><span class="n">DockerModule</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">resource</span><span class="p">(</span><span class="s">"github_repository"</span><span class="p">,</span> <span class="n">context</span><span class="p">.</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We can wrap it all up by defining a <code class="highlighter-rouge">projectGithub</code> spec as well a <code class="highlighter-rouge">moduleRepo</code> spec:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">projectGithub</span> <span class="p">=</span> <span class="n">ConfigurationSpec</span><span class="p">&lt;</span><span class="n">Project</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">include</span><span class="p">(</span><span class="n">projectProvider</span><span class="p">)</span>
+    <span class="n">includeForEach</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">modules</span><span class="p">,</span> <span class="n">moduleRepo</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">val</span> <span class="py">moduleRepo</span> <span class="p">=</span> <span class="n">ConfigurationSpec</span><span class="p">&lt;</span><span class="n">Module</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">include</span><span class="p">(</span><span class="k">when</span> <span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">is</span> <span class="n">JavaModule</span> <span class="p">-&gt;</span> <span class="n">javaModuleRepo</span> <span class="k">as</span> <span class="n">ConfigurationSpec</span><span class="p">&lt;</span><span class="n">Module</span><span class="p">&gt;</span>
+        <span class="k">is</span> <span class="n">DockerModule</span> <span class="p">-&gt;</span> <span class="n">dockerModuleRepo</span> <span class="k">as</span> <span class="n">ConfigurationSpec</span><span class="p">&lt;</span><span class="n">Module</span><span class="p">&gt;</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Finally, we can create a <code class="highlighter-rouge">main</code> function where we chain the empty context into our project, into the project Github
+spec and into actual HCL using the <code class="highlighter-rouge">serializeToHCL</code> function:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">suspend</span> <span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">output</span> <span class="p">=</span> <span class="n">emptyContext</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">myProject</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">projectGithub</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">Configuration</span><span class="o">::</span><span class="n">serializeToHCL</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">value</span>
+    <span class="n">println</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">output</code> variable contains pure HCL terraform configuration code:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>provider "github" {
+  organization = "My cool project"
+  token = "123456"
+}
+
+resource "github_repository" "server" {
+  name = "server"
+}
+
+resource "github_repository" "client" {
+  name = "client"
+}
+
+resource "github_repository" "lb" {
+  name = "lb"
+}
+</code></pre></div></div>
+
+<p>We can hand this code off to terraform and create the module repositories on Github.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In this tutorial we went from defining a simple directory spec, to creating our own custom DSL for declaring a project
+module structure. Using these newly created projects as a context we then constructed project directory as well as a 
+terraform configuration for actually creating module repositories on Github.</p>
+
+<p>Going forward we could use additional low-level DSLs for creating all kinds of resources, ranging from CI pipelines to
+Kubernetes deployments. We can also define new custom-made DSLs that model our more abstract high-level concepts that
+are specific to the domain we are currently working in. Then, we can use the <code class="highlighter-rouge">context</code> variables to translate the 
+high-level languages down to the low-level languages. This opens up a lot of new possibilities for declarative, type-safe
+ways to define our software architecture as a whole.</p>
+
+<p>I hope this tutorial was helpful for you and you are excited to use Philarios in the future. If you have any questions,
+comments or concerns please feel free to open a new issue on the <a href="https://github.com/philarios/philarios">Github repository</a>.</p>
+
+
+
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
