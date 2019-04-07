@@ -302,9 +302,9 @@ to do and why it was originally created. It gives some directions on where to go
 in using the library. In that case, please also make sure to take a look at the prerequisites before diving deeper.</p>
 
 <h2 id="context">Context</h2>
-<p>This library is intended to provide a way to write type-safe configurations in Kotlin instead of writing YAML or 
-JSON-based configuration files. These days almost every system can be configured using YAML which is nice on the one
-hand but also prone to errors and redundant code on the other.</p>
+<p>This library is intended to provide a way to write type-safe specs in Kotlin instead of writing YAML or JSON-based
+configuration files. These days almost every system can be configured using YAML which is nice on the one hand but also
+prone to errors and redundant code on the other.</p>
 
 <p>Which means that instead of writing this:</p>
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s">2</span>
@@ -371,12 +371,12 @@ read in combination with the reference page on <a href="https://kotlinlang.org/d
 <p>Depending on what you want to achieve by using this library, i.e. what your objective is, you should be looking at the
 documentation of different submodules.</p>
 
-<h3 id="getting-started-with-replacing-configuration-files-yaml-json-hcl-with-type-safe-configuration">Getting started with replacing configuration files (YAML, JSON, HCL) with type-safe configuration</h3>
+<h3 id="getting-started-with-replacing-configuration-files-yaml-json-hcl-with-type-safe-specs">Getting started with replacing configuration files (YAML, JSON, HCL) with type-safe specs</h3>
 <p>The library currently supports a number of different systems, all of which I have created because I used them in the
 past or I am currently using them.</p>
 
 <ul>
-  <li>The <a href="philarios-circleci">CircleCI</a> module contains a DSL for writing CircleCI configurations</li>
+  <li>The <a href="philarios-circleci">CircleCI</a> module contains specs for writing CircleCI configurations</li>
   <li>The <a href="philarios-concourse">Concourse</a> module describes how to create Concourse pipeline configurations</li>
   <li>The <a href="philarios-terraform">Terraform</a> module allows you to write arbitrary Terraform configurations in a type-safe way</li>
 </ul>
