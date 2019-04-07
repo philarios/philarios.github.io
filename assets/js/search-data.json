@@ -29,31 +29,31 @@
   },
   "4": {
     "id": "4",
-    "title": "Terraform",
-    "content": "Getting started",
-    "url": "https://philarios.github.io//philarios-terraform",
-    "relUrl": "/philarios-terraform"
-  },
-  "5": {
-    "id": "5",
     "title": "CircleCI",
     "content": "Getting started",
     "url": "https://philarios.github.io//philarios-circleci",
     "relUrl": "/philarios-circleci"
   },
+  "5": {
+    "id": "5",
+    "title": "Core",
+    "content": "Getting started",
+    "url": "https://philarios.github.io//philarios-core",
+    "relUrl": "/philarios-core"
+  },
   "6": {
     "id": "6",
-    "title": "Concourse",
-    "content": "Getting started",
-    "url": "https://philarios.github.io//philarios-concourse",
-    "relUrl": "/philarios-concourse"
-  },
-  "7": {
-    "id": "7",
     "title": "Schema",
     "content": "Getting started",
     "url": "https://philarios.github.io//philarios-schema",
     "relUrl": "/philarios-schema"
+  },
+  "7": {
+    "id": "7",
+    "title": "Concourse",
+    "content": "Getting started",
+    "url": "https://philarios.github.io//philarios-concourse",
+    "relUrl": "/philarios-concourse"
   },
   "8": {
     "id": "8",
@@ -64,10 +64,10 @@
   },
   "9": {
     "id": "9",
-    "title": "Core",
+    "title": "Terraform",
     "content": "Getting started",
-    "url": "https://philarios.github.io//philarios-core",
-    "relUrl": "/philarios-core"
+    "url": "https://philarios.github.io//philarios-terraform",
+    "relUrl": "/philarios-terraform"
   }
   
 }
