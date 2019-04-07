@@ -309,6 +309,40 @@
         <div id="main-content" class="page-content" role="main">
           <h1 id="glossary">Glossary</h1>
 
+<p>A list of terms that are commonly used in Philarios accompanied by a short description.</p>
+
+<h2 id="domain">Domain</h2>
+<p>A domain is a distinct subject area that relates to a specific set of activities. Domains can be everything from the
+world of soccer to the jobs and resource of a continuous integration pipeline.</p>
+
+<h2 id="model">Model</h2>
+<p>Any domain can be expressed in form of many different models. Any one model is a simplified representation of some
+aspects of the domain. This project focuses on models that represent the domain entities and their relationships.</p>
+
+<h2 id="schema">Schema</h2>
+<p>The model’s structure is expressed in form of a schema. Creating a schema for a domain is a way of materializing it
+as a model. Because the world of modelling entities and relationships is a domain itself a schema can be thought of as
+the model of the model domain.</p>
+
+<h2 id="instantiation">Instantiation</h2>
+<p>An instantiation is the creation of some model elements. For example, if the model elements are implemented as classes
+an instantiation would be the creation of the classes’ objects.</p>
+
+<h2 id="spec">Spec</h2>
+<p>Essentially, a spec is a parameterized instantiation, i.e. it is a blueprint to create elements of a specific model.
+While using specs is entirely optional (of course you can just instantiate your model classes like any other classes)
+they provide you with a nice and modular interface to define your model elements more freely.</p>
+
+<h2 id="builder">Builder</h2>
+<p>A builder is what actually builds the model classes (hence, the name). Each spec gets injected with a builder interface
+as the receiver so that the spec can be written using this interface. The actual materialization process can then be
+changed by providing different builder implementations.</p>
+
+<h2 id="context">Context</h2>
+<p>Each builder interface holds a reference to a generic context property. This context can be used to parameterized the
+spec. You can define your context to hold any form of data that you want to have available within the spec’s definition.
+This also allows you to chain specs so that you can go from a high-level spec to lower-level specs.</p>
+
 
           
         </div>
