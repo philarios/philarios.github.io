@@ -299,14 +299,24 @@
         
         <div id="main-content" class="page-content" role="main">
           <h1 id="getting-started">Getting started</h1>
+<p>This small tutorial is aimed at teaching you the basics of Philarios schemas.</p>
 
 <h2 id="prerequisites">Prerequisites</h2>
+<p>Since this module does not depend on any external systems, it is enough to have a solid grasp on Kotlin <a href="https://kotlinlang.org/docs/reference/type-safe-builders.html">Type-Safe Builders</a>
+in order to proceed. Since the meta-schema is structured using types similar to <a href="https://en.wikipedia.org/wiki/Algebraic_data_type">algebraic data types</a>,
+it would also be great if you had at least some exposure to those.</p>
 
 <h2 id="goal">Goal</h2>
+<p>Getting started with the Philarios Schema module means to write your own first schema and then using it to define some
+parameterized instances of your model.</p>
 
 <h2 id="walkthrough">Walkthrough</h2>
+<p>Without any further ado let us get started!</p>
 
 <h3 id="setup">Setup</h3>
+<p>As usual when trying out some new software I would recommend to just create a new Kotlin project in Intellij using
+Gradle. Because the project is primarily hosted on bintray, for now, please add the repository to your <code class="highlighter-rouge">build.gradle</code>
+file in addition to the two dependencies for the <code class="highlighter-rouge">core</code> module and the <code class="highlighter-rouge">schema</code> module.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>repositories {
     maven {
