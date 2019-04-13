@@ -8,66 +8,59 @@
   },
   "1": {
     "id": "1",
-    "title": "Design decisions",
-    "content": "Design decisions TODO",
-    "url": "https://philarios.github.io//design-decisions",
-    "relUrl": "/design-decisions"
-  },
-  "2": {
-    "id": "2",
     "title": "Glossary",
     "content": "Glossary A list of terms that are commonly used in Philarios accompanied by a short description. Domain A domain is a distinct subject area that relates to a specific set of activities. Domains can be everything from the world of soccer to the jobs and resource of a continuous integration pipeline. Model Any domain can be expressed in form of many different models. Any one model is a simplified representation of some aspects of the domain. This project focuses on models that represent the domain entities and their relationships. Schema The model’s structure is expressed in form of a schema. Creating a schema for a domain is a way of materializing it as a model. Because the world of modelling entities and relationships is a domain itself a schema can be thought of as the model of the model domain. Instantiation An instantiation is the creation of some model elements. For example, if the model elements are implemented as classes an instantiation would be the creation of the classes’ objects. Spec Essentially, a spec is a parameterized instantiation, i.e. it is a blueprint to create elements of a specific model. While using specs is entirely optional (of course you can just instantiate your model classes like any other classes) they provide you with a nice and modular interface to define your model elements more freely. Builder A builder is what actually builds the model classes (hence, the name). Each spec gets injected with a builder interface as the receiver so that the spec can be written using this interface. The actual materialization process can then be changed by providing different builder implementations. Context Each builder interface holds a reference to a generic context property. This context can be used to parameterized the spec. You can define your context to hold any form of data that you want to have available within the spec’s definition. This also allows you to chain specs so that you can go from a high-level spec to lower-level specs.",
     "url": "https://philarios.github.io//philarios-core/glossary.html",
     "relUrl": "/philarios-core/glossary.html"
   },
+  "2": {
+    "id": "2",
+    "title": "Terraform",
+    "content": "Getting started",
+    "url": "https://philarios.github.io//philarios-terraform",
+    "relUrl": "/philarios-terraform"
+  },
   "3": {
     "id": "3",
-    "title": "JSON Schema",
-    "content": "Getting started",
-    "url": "https://philarios.github.io//philarios-jsonschema",
-    "relUrl": "/philarios-jsonschema"
-  },
-  "4": {
-    "id": "4",
     "title": "CircleCI",
     "content": "Getting started",
     "url": "https://philarios.github.io//philarios-circleci",
     "relUrl": "/philarios-circleci"
   },
-  "5": {
-    "id": "5",
-    "title": "Core",
-    "content": "Getting started",
-    "url": "https://philarios.github.io//philarios-core",
-    "relUrl": "/philarios-core"
-  },
-  "6": {
-    "id": "6",
+  "4": {
+    "id": "4",
     "title": "Schema",
     "content": "Getting started This small tutorial is aimed at teaching you the basics of Philarios schemas. Prerequisites Since this module does not depend on any external systems, it is enough to have a solid grasp on Kotlin Type-Safe Builders in order to proceed. Since the meta-schema is structured using types similar to algebraic data types, it would also be great if you had at least some exposure to those. Goal Getting started with the Philarios Schema module means to write your own first schema and then using it to define some parameterized instances of your model. Walkthrough Without any further ado let us get started! Setup As usual when trying out some new software I would recommend to just create a new Kotlin project in Intellij using Gradle. Because the project is primarily hosted on bintray, for now, please add the repository to your build.gradle file in addition to the two dependencies for the core module and the schema module. repositories { maven { url &quot;https://dl.bintray.com/philarios/philarios&quot; } } dependencies { compile &quot;io.philarios:philarios-core:${philarios_version}&quot; compile &quot;io.philarios:philarios-schema:${philarios_version}&quot; } Creating your first schema spec val filesystemSchema = SchemaSpec&lt;Any?&gt; { name(&quot;FileSystem&quot;) pkg(&quot;io.philarios.filesystem&quot;) struct(&quot;File&quot;) { field(&quot;name&quot;, StringType) } } suspend fun main() = generateCode(filesystemSchema) Using the filesystem spec val indexFile = FileSpec&lt;Any?&gt; { name(&quot;index.html&quot;) } suspend fun main() { val file = emptyContext() .map(FileScaffolder(indexFile)) .value println(file) } File(name=index.html) Improving the schema val filesystemSchema = SchemaSpec&lt;Any?&gt; { name(&quot;FileSystem&quot;) pkg(&quot;io.philarios.filesystem&quot;) union(&quot;Entry&quot;) { shape(&quot;Directory&quot;) { field(&quot;name&quot;, StringType) field(&quot;entries&quot;, list(ref(&quot;Entry&quot;))) } shape(&quot;File&quot;) { field(&quot;name&quot;, StringType) } } } val projectDir = DirectorySpec&lt;Any?&gt; { name(&quot;website&quot;) entry(indexFile) entry(DirectorySpec { name(&quot;assets&quot;) entry(FileSpec { name(&quot;favicon.ico&quot;) }) }) } val indexFile = FileSpec&lt;Any?&gt; { name(&quot;index.html&quot;) } Directory(name=website, entries=[File(name=index.html), Directory(name=assets, entries=[File(name=favicon.ico)])]) Using the context data class ProjectContext(val name: String) val projectDir = DirectorySpec&lt;ProjectContext&gt; { name(context.name) entry(indexFile) entry(DirectorySpec { name(&quot;assets&quot;) entry(FileSpec { name(&quot;favicon.ico&quot;) }) }) } val rootDir = DirectorySpec&lt;List&lt;ProjectContext&gt;&gt; { name(&quot;root&quot;) includeForEach(context) { entry(projectDir) } } suspend fun main() { val projects = listOf( ProjectContext(&quot;Hello World&quot;), ProjectContext(&quot;Todo&quot;), ProjectContext(&quot;Tetris&quot;) ) val file = contextOf(projects) .map(DirectoryScaffolder(rootDir)) .value println(file) } Directory(name=root, entries=[ Directory(name=Hello World, entries=[File(name=index.html), Directory(name=assets, entries=[File(name=favicon.ico)])]), Directory(name=Todo, entries=[File(name=index.html), Directory(name=assets, entries=[File(name=favicon.ico)])]), Directory(name=Tetris, entries=[File(name=index.html), Directory(name=assets, entries=[File(name=favicon.ico)])]) ])",
     "url": "https://philarios.github.io//philarios-schema",
     "relUrl": "/philarios-schema"
   },
-  "7": {
-    "id": "7",
+  "5": {
+    "id": "5",
+    "title": "JSON Schema",
+    "content": "Getting started",
+    "url": "https://philarios.github.io//philarios-jsonschema",
+    "relUrl": "/philarios-jsonschema"
+  },
+  "6": {
+    "id": "6",
     "title": "Concourse",
     "content": "Getting started",
     "url": "https://philarios.github.io//philarios-concourse",
     "relUrl": "/philarios-concourse"
   },
-  "8": {
-    "id": "8",
+  "7": {
+    "id": "7",
     "title": "Introduction",
     "content": "Introduction Welcome to Philarios! This short introduction page should give you a broad overview over what this library is intended to do and why it was originally created. It gives some directions on where to go from here if you are interested in using the library. In that case, please also make sure to take a look at the prerequisites before diving deeper. Context This library is intended to provide a way to write type-safe specs in Kotlin instead of writing YAML or JSON-based configuration files. These days almost every system can be configured using YAML which is nice on the one hand but also prone to errors and redundant code on the other. Which means that instead of writing this: version: 2 jobs: build: docker: - image: circleci/ruby:2.4.1 steps: - checkout - run: echo &quot;A first hello&quot; You can start writing this: val circleCI = CircleCISpec { version(&quot;2&quot;) jobs(&quot;build&quot;) { docker { image(&quot;circleci/ruby:2.4.1&quot;) } checkout() run(&quot;echo &#39;A first hello&#39;&quot;) } } This allows you to employ common software engineering practices in order to DRY your code. So you can go over: val circleCI = CircleCISpec { jobs(&quot;build&quot;) { rubyImage() checkout() run(&quot;echo &#39;A first hello&#39;&quot;) } } All the way to: data class ServiceContext(val name: String) val circleCI = CircleCISpec&lt;ServiceContext&gt; { buildRubyJob(context.name) } Design decisions If you do not particularly care about why this project exists please feel free to skip to the next section. To sum everything up, I have created this project because I was writing a lot of YAML configuration files for DevOps-related systems at the same time as I was writing a lot of services in Kotlin. Which made me put one and one together to create a library for writing configuration files in a type-safe way. In addition to that I was (at least attempting to) designing a microservice-oriented architecture and I was missing some way of specifying the high-level dependencies between services. This lead me to generalize the type-safe configuration generator for arbitrary schemas. Please feel free to read through Design decisions if you are interested in more details. Prerequisites Since this library is entirely written in Kotlin familiarity with the language is definitely a plus. The Kotlin Koans are an excellent way of getting more familiar with Kotlin if you have not worked with it before. Especially the Koans covering the Kotlin-style Builders are useful to read in combination with the reference page on Type-Safe Builders. Getting started Depending on what you want to achieve by using this library, i.e. what your objective is, you should be looking at the documentation of different submodules. Getting started with replacing configuration files (YAML, JSON, HCL) with type-safe specs The library currently supports a number of different systems, all of which I have created because I used them in the past or I am currently using them. The CircleCI module contains specs for writing CircleCI configurations The Concourse module describes how to create Concourse pipeline configurations The Terraform module allows you to write arbitrary Terraform configurations in a type-safe way If your favorite system’s configuration is missing from the list, please raise an Issue requesting it or feel free to even create a Pull Request adding a new module if you are feeling supportive. Getting started with defining a schema for my own domain specific language Please refer to the Schema module to learn more about how to use the schema spec in order to create new languages.",
     "url": "https://philarios.github.io//",
     "relUrl": "/"
   },
-  "9": {
-    "id": "9",
-    "title": "Terraform",
+  "8": {
+    "id": "8",
+    "title": "Core",
     "content": "Getting started",
-    "url": "https://philarios.github.io//philarios-terraform",
-    "relUrl": "/philarios-terraform"
+    "url": "https://philarios.github.io//philarios-core",
+    "relUrl": "/philarios-core"
   }
   
 }
